@@ -58,8 +58,12 @@ def get_input(filename, cpx_object):
             lin_expr = cplex.SparsePair(
                 ind = variable_names,
                 val = [1] * len(variable_names))
-            cpx_object.linear_constraints.add(lin_expr = [lin_expr],
-                                                   senses=["L"], rhs = [2])
+            cpx_object.linear_constraints.add(
+                lin_expr = [lin_expr],
+                senses=["L"], 
+                rhs = [2],
+                names = [f"{node1}-{node2}"]
+                )
             
             
         # adding simple constraints
@@ -71,8 +75,12 @@ def get_input(filename, cpx_object):
                     ind = variables,
                     val = [1] * len(variables)
                     )
-                cpx_object.linear_constraints.add(lin_expr = [lin_expr],
-                                                   senses=["E"], rhs = [2])
+                cpx_object.linear_constraints.add(
+                    lin_expr = [lin_expr],
+                    senses=["E"], 
+                    rhs = [2],
+                    names = [f"{node}-{tour_index}"]
+                    )
         
         
         
@@ -89,7 +97,7 @@ def main():
     cpx.objective.set_sense(cpx.objective.sense.minimize)
     get_input("./data_for_kittsp.txt", cpx)
 
-    print(cpx.linear_constraints.get_num())
+    print(cpx.linear_constraints.get_names())
 
 
 
