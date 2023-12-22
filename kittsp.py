@@ -37,6 +37,17 @@ def get_input(filename, cpx_object):
         Nodes = []
         for i in range(N):
             Nodes.append(file.readline().strip())
+        M = int(file.readline().strip())
+
+        # adding varaibles
+        for i in range(M):
+            node1, node2, cost = file.readline().split()
+            cpx_object.variables.add(
+                obj = [float(cost)] * K,  
+                types = [cpx_object.variables.type.binary] * K, 
+                names = [f"{node1}-{node2}-{j}" for j in range(K)]
+                )
+        
         
 
         
@@ -48,7 +59,7 @@ def main():
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
-    get_input("./data_for_kittsp.txt")
+    get_input("./data_for_kittsp.txt", cpx)
 
 
 
