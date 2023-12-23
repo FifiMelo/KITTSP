@@ -16,8 +16,8 @@ def get_variables_of_node(node_name, tour_index, cpx_object):
 
 def get_input(filename, cpx_object):
     """
-    This function returns set of cplex variables as well as cplex constrains
-    read from the file. The file must be in specific format, i.e.:
+    This function reads the input file, adds the constraints to the cpx object, 
+    and then returns the list of nodes of the graph
     3 <- K, the number of independent tours to be found
     5 <- N, the number of nodes in the graph
     A
@@ -81,8 +81,20 @@ def get_input(filename, cpx_object):
                     rhs = [2],
                     names = [f"{node}-{tour_index}"]
                     )
+        return Nodes
         
         
+class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
+
+    def __call__(self):
+        print("source:")
+        print(self.nodes)
+        print(self.possible_edges)
+        print(self.get_values())
+
+    def read_graph(self, nodes, possible_edges):
+        self.nodes = nodes
+        self.possible_edges = possible_edges
         
         
 
@@ -95,9 +107,14 @@ def main():
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
-    get_input("./data_for_kittsp.txt", cpx)
+    nodes = get_input("./simple_data.txt", cpx)
 
     # print(cpx.linear_constraints.get_names())
+    lazyCB = cpx.register_callback(MyLazyConsCallback)
+    lazyCB.read_graph(nodes, cpx.variables.get_names())
+    cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
+    #cpx.parameters.threads.set(1)
+    cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
     cpx.solve()
 
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
