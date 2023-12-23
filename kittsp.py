@@ -47,12 +47,16 @@ def get_input(filename, cpx_object):
         # adding varaibles
         for i in range(M):
             node1, node2, cost = file.readline().split()
-            variable_names = [f"{node1}-{node2}-{tour_index}" for tour_index in range(K)]
+            if node1 < node2:
+                variable_names = [f"{node1}-{node2}-{tour_index}" for tour_index in range(K)]
+            else:
+                variable_names = [f"{node2}-{node1}-{tour_index}" for tour_index in range(K)]
             cpx_object.variables.add(
                 obj = [float(cost)] * K,  
                 types = [cpx_object.variables.type.binary] * K, 
-                names = [f"{node1}-{node2}-{tour_index}" for tour_index in range(K)]
+                names = variable_names
                 )
+
             
             # adding constraints that none of the edges can be in more that one tour
             lin_expr = cplex.SparsePair(
@@ -61,7 +65,7 @@ def get_input(filename, cpx_object):
             cpx_object.linear_constraints.add(
                 lin_expr = [lin_expr],
                 senses=["L"], 
-                rhs = [2],
+                rhs = [1],
                 names = [f"{node1}-{node2}"]
                 )
             
@@ -81,20 +85,81 @@ def get_input(filename, cpx_object):
                     rhs = [2],
                     names = [f"{node}-{tour_index}"]
                     )
-        return Nodes
+        return Nodes, K
         
         
 class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
 
     def __call__(self):
-        print("source:")
-        print(self.nodes)
-        print(self.possible_edges)
-        print(self.get_values())
+        """
+        This function is used to add a constraint eliminating subtours using bfs algorithm
+        """
+        values = self.get_values()
 
-    def read_graph(self, nodes, possible_edges):
+
+        # we need to create adjacency lists to be able to do bfs algorithm efficiently
+        adjacency_list = [dict() for i in range(self.K)]
+        for i in range(len(self.possible_edges)):
+            if values[i] == 1:
+                node1, node2, tour = self.possible_edges[i].split("-")
+                tour = int(tour)
+
+                if node1 in adjacency_list[tour]:
+                    adjacency_list[tour][node1].append(node2)
+                else:
+                    adjacency_list[tour][node1] = [node2]
+
+                if node2 in adjacency_list[tour]:
+                    adjacency_list[tour][node2].append(node1)
+                else:
+                    adjacency_list[tour][node2] = [node1]
+
+        print(adjacency_list)
+        
+        for k in range(self.K):
+            # we will check if the k-th tour is really a tour (and not few sub-tours)
+            visited_nodes = set()
+            previous_node = self.nodes[0]
+            new_node = adjacency_list[k][previous_node][0]
+            visited_nodes.add(previous_node)
+            while not new_node == self.nodes[0]:
+                visited_nodes.add(new_node)
+                if adjacency_list[k][new_node][0] == previous_node:
+                    previous_node = new_node
+                    new_node = adjacency_list[k][new_node][1]
+                else:
+                    previous_node = new_node
+                    new_node = adjacency_list[k][new_node][0]
+
+
+           
+            
+            if len(visited_nodes) < len(self.nodes):
+                # if the tour turned out to be just a subtour
+                node_group1 = visited_nodes
+                node_group2 = set(self.nodes) - visited_nodes
+                
+                
+                    
+            
+
+
+                
+
+
+
+
+
+
+    def read_graph(self, nodes, K, cpx_object):
+        """
+        This function is used to provide nodes and possible edges to 
+        the LazyCallback object
+        """
         self.nodes = nodes
-        self.possible_edges = possible_edges
+        self.possible_edges = cpx_object.variables.get_names()
+        self.K = K
+        self.cpx_object = cpx_object
         
         
 
@@ -107,11 +172,11 @@ def main():
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
-    nodes = get_input("./simple_data.txt", cpx)
+    nodes, K = get_input("./data2_for_kittsp.txt", cpx)
 
     # print(cpx.linear_constraints.get_names())
     lazyCB = cpx.register_callback(MyLazyConsCallback)
-    lazyCB.read_graph(nodes, cpx.variables.get_names())
+    lazyCB.read_graph(nodes, K, cpx)
     cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
     #cpx.parameters.threads.set(1)
     cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
