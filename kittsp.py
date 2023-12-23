@@ -9,7 +9,7 @@ def get_variables_of_node(node_name, tour_index, cpx_object):
     selected_variables = []
     for variable in all_variables:
         node1, node2, tour = variable.split("-")
-        if (node1 == node_name or node2 == node_name) and tour == tour_index:
+        if (node1 == node_name or node2 == node_name) and int(tour) == tour_index:
             selected_variables.append(variable)
     return selected_variables
 
@@ -97,7 +97,16 @@ def main():
     cpx.objective.set_sense(cpx.objective.sense.minimize)
     get_input("./data_for_kittsp.txt", cpx)
 
-    print(cpx.linear_constraints.get_names())
+    # print(cpx.linear_constraints.get_names())
+    cpx.solve()
+
+    if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
+        myObj=cpx.solution.get_objective_value()
+        mySol=cpx.solution.get_values()
+        print(myObj)
+        print(mySol)
+    else:
+        print("ERROR")
 
 
 
