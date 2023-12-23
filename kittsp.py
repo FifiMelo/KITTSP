@@ -13,11 +13,19 @@ def get_variables_of_node(node_name, tour_index, cpx_object):
             selected_variables.append(variable)
     return selected_variables
 
+def variable_name(node1, node2, k):
+    """
+    This function returns variable name responsible for connecting two nodes in k-th tour.
+    Purpose of this function is to always keep nodes in alphabetical order.
+    """
+    if node1 < node2:
+        return f"{node1}-{node2}-{k}"
+    return f"{node2}-{node1}-{k}"
 
 def get_input(filename, cpx_object):
     """
-    This function reads the input file, adds the constraints to the cpx object, 
-    and then returns the list of nodes of the graph
+    This function reads the input file, adds variables and constraints to the cpx object, 
+    and then returns the list of nodes of the graph as well as K - number of tours
     3 <- K, the number of independent tours to be found
     5 <- N, the number of nodes in the graph
     A
@@ -47,10 +55,9 @@ def get_input(filename, cpx_object):
         # adding varaibles
         for i in range(M):
             node1, node2, cost = file.readline().split()
-            if node1 < node2:
-                variable_names = [f"{node1}-{node2}-{tour_index}" for tour_index in range(K)]
-            else:
-                variable_names = [f"{node2}-{node1}-{tour_index}" for tour_index in range(K)]
+
+            variable_names = [variable_name(node1, node2, tour_index) for tour_index in range(K)]
+
             cpx_object.variables.add(
                 obj = [float(cost)] * K,  
                 types = [cpx_object.variables.type.binary] * K, 
@@ -132,25 +139,20 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
                     new_node = adjacency_list[k][new_node][0]
 
 
-           
-            
             if len(visited_nodes) < len(self.nodes):
                 # if the tour turned out to be just a subtour
                 node_group1 = visited_nodes
                 node_group2 = set(self.nodes) - visited_nodes
+                variable_names = [variable_name(node1, node2, k) for node1 in node_group1 for node2 in node_group2]
+                lin_expr = cplex.SparsePair(
+                    ind = variable_names,
+                    val = [1] * len(variable_names))
+                self.add(
+                    constraint = lin_expr,
+                    sense = "E",
+                    rhs = 2.0
+                    )
                 
-                
-                    
-            
-
-
-                
-
-
-
-
-
-
     def read_graph(self, nodes, K, cpx_object):
         """
         This function is used to provide nodes and possible edges to 
@@ -161,13 +163,6 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         self.K = K
         self.cpx_object = cpx_object
         
-        
-
-        
-
-
-
-
 def main():
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
@@ -189,12 +184,6 @@ def main():
         print(mySol)
     else:
         print("ERROR")
-
-
-
-    
-
-
 
 
 if __name__ == '__main__':
