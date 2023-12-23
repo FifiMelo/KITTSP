@@ -13,6 +13,7 @@ def get_variables_of_node(node_name, tour_index, cpx_object):
             selected_variables.append(variable)
     return selected_variables
 
+
 def variable_name(node1, node2, k):
     """
     This function returns variable name responsible for connecting two nodes in k-th tour.
@@ -57,6 +58,7 @@ def get_input(filename, cpx_object):
             node1, node2, cost = file.readline().split()
 
             variable_names = [variable_name(node1, node2, tour_index) for tour_index in range(K)]
+
 
             cpx_object.variables.add(
                 obj = [float(cost)] * K,  
@@ -163,6 +165,24 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         self.K = K
         self.cpx_object = cpx_object
         
+
+def display_result(cpx_object, K):
+    objective = cpx_object.solution.get_objective_value()
+    solution = cpx_object.solution.get_values()
+    taken_edges = [set() for tour_index in range(K)]
+    variable_names = cpx_object.variables.get_names()
+    for edge_index in range(len(variable_names)):
+        if solution[edge_index] == 1:
+            taken_edges[int(variable_names[edge_index][-1])].add(variable_names[edge_index])
+    for tour_index in range(K):
+        print(f"Edges taken to the tour number {tour_index}:")
+        for edge in taken_edges[tour_index]:
+            print(edge[:-2])
+    print(f"Full distance is {objective}")
+            
+
+
+
 def main():
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
@@ -178,10 +198,7 @@ def main():
     cpx.solve()
 
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
-        myObj=cpx.solution.get_objective_value()
-        mySol=cpx.solution.get_values()
-        print(myObj)
-        print(mySol)
+        display_result(cpx, K)
     else:
         print("ERROR")
 
