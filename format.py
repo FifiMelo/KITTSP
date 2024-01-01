@@ -4,6 +4,15 @@ https://www.math.uwaterloo.ca/tsp/world/countries.html
 convert it to data format readable by our solver and add edges.
 """
 
+import math
+
+
+def distance(x1, y1, x2, y2):
+    """
+    We will be able to watch changes in the path after changing type of metrics we use
+    """
+    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
 def main():
     input_file_name = "./data/uy734.tsp"
     output_file_name = "./data/data.txt"
@@ -24,13 +33,22 @@ def main():
             out_file.write(str(number_of_incoming_nodes))
             out_file.write("\n")
 
+            nodes = []
+
             # adding nodes
             for node in range(number_of_incoming_nodes):
                 index, x, y = in_file.readline().split()
                 out_file.write(f"{index}_{x}_{y}\n")
+                nodes.append((int(index), float(x), float(y)))
 
             out_file.write(str((number_of_incoming_nodes * (number_of_incoming_nodes - 1)) // 2))
             out_file.write("\n")
+
+            for i in range(number_of_incoming_nodes):
+                for j in range(i + 1, number_of_incoming_nodes):
+                    pass
+                    
+
 
             
 
