@@ -184,10 +184,11 @@ def display_result(cpx_object, K):
 
 
 def main():
+    input_file_name = "./data2_for_kittsp.txt"
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
-    nodes, K = get_input("./data2_for_kittsp.txt", cpx)
+    nodes, K = get_input(input_file_name, cpx)
 
     # print(cpx.linear_constraints.get_names())
     lazyCB = cpx.register_callback(MyLazyConsCallback)
