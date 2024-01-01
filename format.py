@@ -11,12 +11,16 @@ def distance(x1, y1, x2, y2):
     """
     We will be able to watch changes in the path after changing type of metrics we use
     """
-    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+    assert type(x1) is float
+    assert type(y1) is float
+    assert type(x2) is float
+    assert type(y2) is float
+    return int(math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
 def main():
     input_file_name = "./data/uy734.tsp"
     output_file_name = "./data/data.txt"
-    output_file_tours_number = 3
+    output_file_tours_number = 1
     number_of_incoming_nodes = 734
 
 
@@ -35,18 +39,28 @@ def main():
 
             nodes = []
 
-            # adding nodes
+            # reading nodes
             for node in range(number_of_incoming_nodes):
                 index, x, y = in_file.readline().split()
-                out_file.write(f"{index}_{x}_{y}\n")
-                nodes.append((int(index), float(x), float(y)))
+                node_name = f"{index}_{x}_{y}"
+                nodes.append((float(x), float(y), node_name))
+
+            #adding nodes to the output file
+            for i in range(number_of_incoming_nodes):
+                out_file.write(f"{nodes[i][2]}\n")
 
             out_file.write(str((number_of_incoming_nodes * (number_of_incoming_nodes - 1)) // 2))
             out_file.write("\n")
 
             for i in range(number_of_incoming_nodes):
                 for j in range(i + 1, number_of_incoming_nodes):
-                    pass
+                    x1, y1, node_name1 = nodes[i]
+                    x2, y2, node_name2 = nodes[j]
+                    x1 = float(x1)
+                    y1 = float(y1)
+                    x2 = float(x2)
+                    y2 = float(y2)
+                    out_file.write(f"{node_name1} {node_name2} {str(distance(x1, y1, x2, y2))}\n")
                     
 
 
