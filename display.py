@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 from icecream import ic
 import utils
+from matplotlib import cm
+import numpy as np
+
 
 
 
@@ -30,15 +33,18 @@ def display(cpx_object, nodes, K):
 
         X.append(float(x))
         Y.append(float(y))
+    
+    colours = cm.rainbow(np.linspace(0, 1, K))
 
     for k in range(K):
         for i in range(len(tours[k]) - 1):
             _, x1, y1 = tours[k][i].split("_")
             _, x2, y2 = tours[k][i + 1].split("_")
-            plt.plot([float(x1), float(x2)], [float(y1), float(y2)], color = "black")
+            plt.plot([float(x1), float(x2)], [float(y1), float(y2)], color = colours[k][:-1])
         _, x1, y1 = tours[k][0].split("_")
         _, x2, y2 = tours[k][-1].split("_")
-        plt.plot([float(x1), float(x2)], [float(y1), float(y2)], color = "black")
+        plt.plot([float(x1), float(x2)], [float(y1), float(y2)], color = colours[k][:-1])
     plt.scatter(X, Y)
     plt.show()
+
 
