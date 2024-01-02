@@ -18,10 +18,9 @@ def distance(x1, y1, x2, y2):
     return int(math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
 def main():
-    input_file_name = "./data/uy734.tsp"
+    input_file_name = "./data/wi29.tsp"
     output_file_name = "./data/data.txt"
     output_file_tours_number = 1
-    number_of_incoming_nodes = 734
 
 
     with open(input_file_name, "r") as in_file:
@@ -34,16 +33,24 @@ def main():
             # adding numbers K and N
             out_file.write(str(output_file_tours_number))
             out_file.write("\n")
-            out_file.write(str(number_of_incoming_nodes))
-            out_file.write("\n")
+            
 
             nodes = []
 
             # reading nodes
-            for node in range(number_of_incoming_nodes):
-                index, x, y = in_file.readline().split()
+            while True:
+                input = in_file.readline()
+                if input[:3] == "EOF":
+                    break
+                index, x, y = input.split()
                 node_name = f"{index}_{x}_{y}"
                 nodes.append((float(x), float(y), node_name))
+
+
+            nodes = list(set(nodes))
+            number_of_incoming_nodes = len(nodes)
+            out_file.write(str(number_of_incoming_nodes))
+            out_file.write("\n")
 
             #adding nodes to the output file
             for i in range(number_of_incoming_nodes):
