@@ -18,8 +18,8 @@ def distance(x1, y1, x2, y2):
     return int(math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
 def main():
-    input_file_name = "./data/wi29.tsp"
-    output_file_name = "./data/data.txt"
+    input_file_name = "./raw_data/wi29.tsp"
+    output_file_name = "./preprocessed/wi29.txt"
     output_file_tours_number = 1
 
 

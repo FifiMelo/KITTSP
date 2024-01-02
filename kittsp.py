@@ -184,7 +184,7 @@ def display_result(cpx_object, K):
 
 
 def main():
-    input_file_name = "./data/data.txt"
+    input_file_name = "./preprocessed/wi29.txt"
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
