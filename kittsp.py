@@ -1,29 +1,8 @@
 import cplex
 import display
-from utils import tour
+import utils
 
 
-def get_variables_of_node(node_name, tour_index, cpx_object):
-    """
-    This function returns a list of variables corresponding to the given node, and given tour index
-    """
-    all_variables = cpx_object.variables.get_names()
-    selected_variables = []
-    for variable in all_variables:
-        node1, node2, tour = variable.split("-")
-        if (node1 == node_name or node2 == node_name) and int(tour) == tour_index:
-            selected_variables.append(variable)
-    return selected_variables
-
-
-def variable_name(node1, node2, k):
-    """
-    This function returns variable name responsible for connecting two nodes in k-th tour.
-    Purpose of this function is to always keep nodes in alphabetical order.
-    """
-    if node1 < node2:
-        return f"{node1}-{node2}-{k}"
-    return f"{node2}-{node1}-{k}"
 
 def get_input(filename, cpx_object):
     """
@@ -59,7 +38,7 @@ def get_input(filename, cpx_object):
         for i in range(M):
             node1, node2, cost = file.readline().split()
 
-            variable_names = [variable_name(node1, node2, tour_index) for tour_index in range(K)]
+            variable_names = [utils.variable_name(node1, node2, tour_index) for tour_index in range(K)]
 
 
             cpx_object.variables.add(
@@ -85,7 +64,7 @@ def get_input(filename, cpx_object):
         # that in each tour in each node exactly two edges must be selected
         for node in Nodes:
             for tour_index in range(K):
-                variables = get_variables_of_node(node, tour_index, cpx_object)
+                variables = utils.get_variables_of_node(node, tour_index, cpx_object)
                 lin_expr = cplex.SparsePair(
                     ind = variables,
                     val = [1] * len(variables)
@@ -106,14 +85,14 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         This function is used to add a constraint eliminating subtours using bfs algorithm
         """
 
-        visited_nodes = tour(self.possible_edges, self.get_values(), self.K)
+        visited_nodes = utils.tour(self.possible_edges, self.get_values(), self.K)
 
         for k in range(self.K):
-            if len(visited_nodes) < len(self.nodes):
+            if len(visited_nodes[k]) < len(self.nodes):
                 # if the tour turned out to be just a subtour
-                node_group1 = visited_nodes
-                node_group2 = set(self.nodes) - visited_nodes
-                variable_names = [variable_name(node1, node2, k) for node1 in node_group1 for node2 in node_group2]
+                node_group1 = visited_nodes[k]
+                node_group2 = set(self.nodes) - set(visited_nodes[k])
+                variable_names = [utils.variable_name(node1, node2, k) for node1 in node_group1 for node2 in node_group2]
                 lin_expr = cplex.SparsePair(
                     ind = variable_names,
                     val = [1] * len(variable_names))
@@ -134,24 +113,8 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         self.cpx_object = cpx_object
         
 
-def display_result(cpx_object, K):
-    objective = cpx_object.solution.get_objective_value()
-    solution = cpx_object.solution.get_values()
-    taken_edges = [set() for tour_index in range(K)]
-    variable_names = cpx_object.variables.get_names()
-    for edge_index in range(len(variable_names)):
-        if solution[edge_index] == 1:
-            taken_edges[int(variable_names[edge_index][-1])].add(variable_names[edge_index])
-    for tour_index in range(K):
-        print(f"Edges taken to the tour number {tour_index}:")
-        for edge in taken_edges[tour_index]:
-            print(edge[:-2])
-    print(f"Full distance is {objective}")
-
-
-
 def main():
-    input_file_name = "./preprocessed/data1_for_kittsp.txt"
+    input_file_name = "./preprocessed/data2_for_kittsp.txt"
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
@@ -164,7 +127,7 @@ def main():
     cpx.solve()
 
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
-        display.get_lists(cpx, K)
+        display.console_write_result(cpx, K)
     else:
         print("ERROR")
         print(cpx.solution.get_status())
