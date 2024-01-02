@@ -59,7 +59,7 @@ def variable_name(node1, node2, k):
 
 def get_variables_of_node(node_name, tour_index, cpx_object):
     """
-    This function returns a list of variables corresponding to the given node, and given tour index
+    This function returns a list of variables corresponding to the given node and given tour index
     """
     all_variables = cpx_object.variables.get_names()
     selected_variables = []
