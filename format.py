@@ -5,7 +5,7 @@ convert it to data format readable by our solver and add edges.
 """
 
 import math
-
+from icecream import ic
 
 def distance(x1, y1, x2, y2):
     """
@@ -18,9 +18,10 @@ def distance(x1, y1, x2, y2):
     return int(math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
 def main():
-    input_file_name = "./raw_data/wi29.tsp"
-    output_file_name = "./preprocessed/wi29.txt"
-    output_file_tours_number = 2
+    name = "dj38"
+    input_file_name = f"./raw_data/{name}.tsp"
+    output_file_name = f"./preprocessed/{name}.txt"
+    output_file_tours_number = 1
 
 
     with open(input_file_name, "r") as in_file:
@@ -40,6 +41,7 @@ def main():
             # reading nodes
             while True:
                 input = in_file.readline()
+                #ic(input)
                 if input[:3] == "EOF":
                     break
                 index, x, y = input.split()
