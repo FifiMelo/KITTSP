@@ -1,5 +1,17 @@
 
 def tour(possible_edges, values, K):
+    """
+    This function gets objects provided by solving a cplex problem
+    and gives the answer as a list of consecutive nodes.
+
+    possible_edges: a list of all posible edges (access it with cpx_object.variables.get_names())
+
+    values: a list of 0s and 1s where 1 in j-th position means that j-th edge is taken
+    (access it with cpx_object.solution.get_values())
+
+    K: number of tours
+
+    """
     adjacency_list = [dict() for i in range(K)]
     for i in range(len(possible_edges)):
         if values[i] == 1:
@@ -18,7 +30,7 @@ def tour(possible_edges, values, K):
     
     for k in range(K):
         # we will check if the k-th tour is really a tour (and not few sub-tours)
-        first_node = adjacency_list[k].keys()[0]
+        first_node = list(adjacency_list[k].keys())[0]
         visited_nodes = []
         previous_node = first_node
         new_node = adjacency_list[k][previous_node][0]
@@ -31,3 +43,4 @@ def tour(possible_edges, values, K):
             else:
                 previous_node = new_node
                 new_node = adjacency_list[k][new_node][0]
+    return visited_nodes 

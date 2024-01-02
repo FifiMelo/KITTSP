@@ -1,5 +1,6 @@
 import cplex
 import display
+from utils import tour
 
 
 def get_variables_of_node(node_name, tour_index, cpx_object):
@@ -104,42 +105,10 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         """
         This function is used to add a constraint eliminating subtours using bfs algorithm
         """
-        values = self.get_values()
 
+        visited_nodes = tour(self.possible_edges, self.get_values(), self.K)
 
-        # we need to create adjacency lists to be able to do bfs algorithm efficiently
-        adjacency_list = [dict() for i in range(self.K)]
-        for i in range(len(self.possible_edges)):
-            if values[i] == 1:
-                node1, node2, tour = self.possible_edges[i].split("-")
-                tour = int(tour)
-
-                if node1 in adjacency_list[tour]:
-                    adjacency_list[tour][node1].append(node2)
-                else:
-                    adjacency_list[tour][node1] = [node2]
-
-                if node2 in adjacency_list[tour]:
-                    adjacency_list[tour][node2].append(node1)
-                else:
-                    adjacency_list[tour][node2] = [node1]
-        
         for k in range(self.K):
-            # we will check if the k-th tour is really a tour (and not few sub-tours)
-            visited_nodes = set()
-            previous_node = self.nodes[0]
-            new_node = adjacency_list[k][previous_node][0]
-            visited_nodes.add(previous_node)
-            while not new_node == self.nodes[0]:
-                visited_nodes.add(new_node)
-                if adjacency_list[k][new_node][0] == previous_node:
-                    previous_node = new_node
-                    new_node = adjacency_list[k][new_node][1]
-                else:
-                    previous_node = new_node
-                    new_node = adjacency_list[k][new_node][0]
-
-
             if len(visited_nodes) < len(self.nodes):
                 # if the tour turned out to be just a subtour
                 node_group1 = visited_nodes
@@ -178,9 +147,6 @@ def display_result(cpx_object, K):
         for edge in taken_edges[tour_index]:
             print(edge[:-2])
     print(f"Full distance is {objective}")
-
-            
-
 
 
 
