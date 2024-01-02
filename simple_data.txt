@@ -1,9 +1,0 @@
-1
-3
-Berlin
-Warsaw
-Vienna
-3
-Berlin Warsaw 1
-Vienna Berlin 1
-Vienna Warsaw 1

@@ -122,8 +122,6 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
                     adjacency_list[tour][node2].append(node1)
                 else:
                     adjacency_list[tour][node2] = [node1]
-
-        print(adjacency_list)
         
         for k in range(self.K):
             # we will check if the k-th tour is really a tour (and not few sub-tours)

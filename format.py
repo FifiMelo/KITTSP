@@ -20,7 +20,7 @@ def distance(x1, y1, x2, y2):
 def main():
     input_file_name = "./raw_data/wi29.tsp"
     output_file_name = "./preprocessed/wi29.txt"
-    output_file_tours_number = 1
+    output_file_tours_number = 2
 
 
     with open(input_file_name, "r") as in_file:
