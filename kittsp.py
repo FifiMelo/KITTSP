@@ -1,4 +1,5 @@
 import cplex
+import display
 
 
 def get_variables_of_node(node_name, tour_index, cpx_object):
@@ -177,12 +178,14 @@ def display_result(cpx_object, K):
         for edge in taken_edges[tour_index]:
             print(edge[:-2])
     print(f"Full distance is {objective}")
+
             
 
 
 
+
 def main():
-    input_file_name = "./preprocessed/dj38.txt"
+    input_file_name = "./preprocessed/data1_for_kittsp.txt"
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
@@ -195,7 +198,7 @@ def main():
     cpx.solve()
 
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
-        display_result(cpx, K)
+        display.get_lists(cpx, K)
     else:
         print("ERROR")
         print(cpx.solution.get_status())
