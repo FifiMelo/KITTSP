@@ -114,7 +114,7 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         
 
 def main():
-    input_file_name = "./preprocessed/data2_for_kittsp.txt"
+    input_file_name = "./preprocessed/wi29.txt"
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
@@ -128,6 +128,7 @@ def main():
 
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
         display.console_write_result(cpx, K)
+        display.display(cpx, nodes, K)
     else:
         print("ERROR")
         print(cpx.solution.get_status())

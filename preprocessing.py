@@ -18,10 +18,11 @@ def distance(x1, y1, x2, y2):
     return int(math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
 def main():
-    name = "dj38"
+    name = "wi29"
     input_file_name = f"./raw_data/{name}.tsp"
     output_file_name = f"./preprocessed/{name}.txt"
     output_file_tours_number = 1
+    number_of_incoming_nodes = 6
 
 
     with open(input_file_name, "r") as in_file:
@@ -49,7 +50,7 @@ def main():
                 nodes.append((float(x), float(y), node_name))
 
 
-            nodes = list(set(nodes))
+            nodes = list(set(nodes[:number_of_incoming_nodes]))
             number_of_incoming_nodes = len(nodes)
             out_file.write(str(number_of_incoming_nodes))
             out_file.write("\n")
@@ -72,10 +73,6 @@ def main():
                     out_file.write(f"{node_name1} {node_name2} {str(distance(x1, y1, x2, y2))}\n")
                     
 
-
-            
-
-        
 
 
 if __name__ == '__main__':
