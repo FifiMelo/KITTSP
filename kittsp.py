@@ -182,17 +182,15 @@ def display_result(cpx_object, K):
 
 
 def main():
-    input_file_name = "./preprocessed/wi29.txt"
+    input_file_name = "./preprocessed/dj38.txt"
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
     nodes, K = get_input(input_file_name, cpx)
 
-    # print(cpx.linear_constraints.get_names())
     lazyCB = cpx.register_callback(MyLazyConsCallback)
     lazyCB.read_graph(nodes, K, cpx)
     cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
-    #cpx.parameters.threads.set(1)
     cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
     cpx.solve()
 
@@ -200,6 +198,7 @@ def main():
         display_result(cpx, K)
     else:
         print("ERROR")
+        print(cpx.solution.get_status())
 
 
 if __name__ == '__main__':
