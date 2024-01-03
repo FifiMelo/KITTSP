@@ -22,7 +22,7 @@ def console_write_result(cpx_object, K):
 
 
 
-def display(cpx_object, nodes, K):
+def display(cpx_object, nodes, K, title):
     objective = cpx_object.solution.get_objective_value()
     solution = cpx_object.solution.get_values()
     variable_names = cpx_object.variables.get_names()
@@ -45,6 +45,7 @@ def display(cpx_object, nodes, K):
         _, x2, y2 = tours[k][-1].split("_")
         plt.plot([float(x1), float(x2)], [float(y1), float(y2)], color = colours[k][:-1])
     plt.scatter(X, Y)
+    plt.title(title)
     plt.show()
 
 

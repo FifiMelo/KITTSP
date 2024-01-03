@@ -116,6 +116,11 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
 def main():
     print("Please enter problem instance name: (from folder preprocessed)")
     input_file_name = f"./preprocessed/{input()}.txt"
+    print("Do you want to display graph? (Y/N) (only for instances with nodes names in format title_x_y)")
+    if input() in ["Y", "y", "T", "t"]:
+        display_graph = True
+    else:
+        display_graph = False
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)
@@ -129,7 +134,8 @@ def main():
 
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
         display.console_write_result(cpx, K)
-        display.display(cpx, nodes, K)
+        if display_graph:
+            display.display(cpx, nodes, K, f"instance: {input_file_name}, K: {K}")
     else:
         print("ERROR")
         print(cpx.solution.get_status())
