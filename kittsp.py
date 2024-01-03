@@ -34,7 +34,7 @@ def get_input(filename, cpx_object):
             Nodes.append(file.readline().strip())
         M = int(file.readline().strip())
 
-        # adding varaibles
+        # adding variables
         for i in range(M):
             node1, node2, cost = file.readline().split()
 
@@ -42,8 +42,8 @@ def get_input(filename, cpx_object):
 
 
             cpx_object.variables.add(
-                obj = [float(cost)] * K,  
-                types = [cpx_object.variables.type.binary] * K, 
+                obj = [float(cost) for tour_index in range(K)],  
+                types = [cpx_object.variables.type.binary for tour_index in range(K)], 
                 names = variable_names
                 )
 
@@ -126,8 +126,8 @@ def main():
     cpx.objective.set_sense(cpx.objective.sense.minimize)
     nodes, K = get_input(input_file_name, cpx)
 
-    lazyCB = cpx.register_callback(MyLazyConsCallback)
-    lazyCB.read_graph(nodes, K, cpx)
+    #lazyCB = cpx.register_callback(MyLazyConsCallback)
+    #lazyCB.read_graph(nodes, K, cpx)
     cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
     cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
     cpx.solve()
