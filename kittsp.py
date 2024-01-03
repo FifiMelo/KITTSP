@@ -114,7 +114,8 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         
 
 def main():
-    input_file_name = "./preprocessed/wi29.txt"
+    print("Please enter problem instance name: (from folder preprocessed)")
+    input_file_name = f"./preprocessed/{input()}.txt"
     cpx = cplex.Cplex()
     cpx.parameters.threads.set(1)
     cpx.objective.set_sense(cpx.objective.sense.minimize)

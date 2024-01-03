@@ -6,6 +6,7 @@ convert it to data format readable by our solver and add edges.
 
 import math
 from icecream import ic
+import random
 
 def distance(x1, y1, x2, y2):
     """
@@ -18,14 +19,21 @@ def distance(x1, y1, x2, y2):
     return int(math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
 def main():
-    name = "wi29"
-    input_file_name = f"./raw_data/{name}.tsp"
-    output_file_name = f"./preprocessed/{name}.txt"
-    output_file_tours_number = 1
-    number_of_incoming_nodes = 6
+    print("Please enter file name to be preprocessed: (from folder raw_data)")
+    name = input()
+    print("Please enter number of independent tours to be found:")
+    output_file_tours_number = int(input())
+    print("Please enter number of nodes to be taken: (-1 if all the nodes)")
+    number_of_incoming_nodes = int(input())
+    read_in_file_name = f"./raw_data/{name}.tsp"
+    if number_of_incoming_nodes == -1:
+        output_file_name = f"./preprocessed/{name}.txt"
+    else:
+        output_file_name = f"./preprocessed/{name[:2]}{number_of_incoming_nodes}.txt"
+    
+    random.seed(212)
 
-
-    with open(input_file_name, "r") as in_file:
+    with open(read_in_file_name, "r") as in_file:
         with open(output_file_name, "w") as out_file:
 
             # first 7 lines contains some information we don't need
@@ -41,16 +49,18 @@ def main():
 
             # reading nodes
             while True:
-                input = in_file.readline()
-                #ic(input)
-                if input[:3] == "EOF":
+                read_in = in_file.readline()
+                #ic(read_in)
+                if read_in[:3] == "EOF":
                     break
-                index, x, y = input.split()
+                index, x, y = read_in.split()
                 node_name = f"{index}_{x}_{y}"
                 nodes.append((float(x), float(y), node_name))
 
-
-            nodes = list(set(nodes[:number_of_incoming_nodes]))
+            if number_of_incoming_nodes == -1:
+                nodes = list(set(nodes))
+            else:
+                nodes = list(set(random.sample(nodes, number_of_incoming_nodes)))
             number_of_incoming_nodes = len(nodes)
             out_file.write(str(number_of_incoming_nodes))
             out_file.write("\n")
