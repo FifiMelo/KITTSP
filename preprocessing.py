@@ -5,7 +5,6 @@ convert it to data format readable by our solver and add edges.
 """
 
 import math
-from icecream import ic
 import random
 
 def distance(x1, y1, x2, y2):

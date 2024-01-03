@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from icecream import ic
 import utils
 from matplotlib import cm
 import numpy as np
