@@ -1,6 +1,7 @@
 import cplex
 import display
 import utils
+import sys
 
 
 
@@ -85,6 +86,7 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         This function is used to add a constraint eliminating subtours using bfs algorithm
         """
 
+
         visited_nodes = utils.tour(self.possible_edges, self.get_values(), self.K)
 
         for k in range(self.K):
@@ -102,15 +104,14 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
                     rhs = 2.0
                     )
                 
-    def read_graph(self, nodes, K, cpx_object):
+    def read_graph(self, nodes, K, variable_names):
         """
         This function is used to provide nodes and possible edges to 
         the LazyCallback object
         """
         self.nodes = nodes
-        self.possible_edges = cpx_object.variables.get_names()
+        self.possible_edges = variable_names
         self.K = K
-        self.cpx_object = cpx_object
         
 
 def main():
@@ -126,8 +127,8 @@ def main():
     cpx.objective.set_sense(cpx.objective.sense.minimize)
     nodes, K = get_input(input_file_name, cpx)
 
-    #lazyCB = cpx.register_callback(MyLazyConsCallback)
-    #lazyCB.read_graph(nodes, K, cpx)
+    lazyCB = cpx.register_callback(MyLazyConsCallback)
+    lazyCB.read_graph(nodes, K, cpx.variables.get_names())
     cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
     cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
     cpx.solve()

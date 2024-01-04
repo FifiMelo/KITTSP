@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import utils
 from matplotlib import cm
 import numpy as np
+from icecream import ic
 
 
 

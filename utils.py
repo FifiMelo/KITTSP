@@ -1,4 +1,6 @@
 
+
+
 def tour(possible_edges, values, K):
     """
     This function gets objects provided by solving a cplex problem
@@ -14,10 +16,10 @@ def tour(possible_edges, values, K):
     """
     adjacency_list = [dict() for i in range(K)]
     for i in range(len(possible_edges)):
-        if values[i] == 1:
+        if values[i] > 0.5:
             node1, node2, tour = possible_edges[i].split("-")
             tour = int(tour)
-
+            
             if node1 in adjacency_list[tour]:
                 adjacency_list[tour][node1].append(node2)
             else:
