@@ -29,11 +29,12 @@ def display(cpx_object, nodes, K, title):
     tours = utils.tour(variable_names, solution, K)
     X, Y = [], []
     for node in nodes:
-        _, x, y = node.split("_")
+        node_name, x, y = node.split("_")
 
         X.append(float(x))
         Y.append(float(y))
-    
+        plt.text(float(x), float(y), node_name)
+
     colours = cm.rainbow(np.linspace(0, 1, K))
 
     for k in range(K):

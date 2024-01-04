@@ -2,6 +2,7 @@ import cplex
 import display
 import utils
 import sys
+from icecream import ic
 
 
 
@@ -39,7 +40,9 @@ def get_input(filename, cpx_object):
         for i in range(M):
             node1, node2, cost = file.readline().split()
 
-            variable_names = [utils.variable_name(node1, node2, tour_index) for tour_index in range(K)]
+            variable_names = [
+                utils.variable_name(node1, node2, tour_index) for tour_index in range(K)
+                ]
 
 
             cpx_object.variables.add(
@@ -94,7 +97,9 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
                 # if the tour turned out to be just a subtour
                 node_group1 = visited_nodes[k]
                 node_group2 = set(self.nodes) - set(visited_nodes[k])
-                variable_names = [utils.variable_name(node1, node2, k) for node1 in node_group1 for node2 in node_group2]
+                variable_names = [
+                    utils.variable_name(node1, node2, k) for node1 in node_group1 for node2 in node_group2
+                    ]
                 lin_expr = cplex.SparsePair(
                     ind = variable_names,
                     val = [1] * len(variable_names))
@@ -127,8 +132,8 @@ def main():
     cpx.objective.set_sense(cpx.objective.sense.minimize)
     nodes, K = get_input(input_file_name, cpx)
 
-    lazyCB = cpx.register_callback(MyLazyConsCallback)
-    lazyCB.read_graph(nodes, K, cpx.variables.get_names())
+    #lazyCB = cpx.register_callback(MyLazyConsCallback)
+    #lazyCB.read_graph(nodes, K, cpx.variables.get_names())
     cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
     cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
     cpx.solve()
@@ -138,7 +143,6 @@ def main():
         if display_graph:
             display.display(cpx, nodes, K, f"instance: {input_file_name}, K: {K}")
     else:
-        print("ERROR")
         print(cpx.solution.get_status())
 
 

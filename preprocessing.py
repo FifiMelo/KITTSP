@@ -59,7 +59,7 @@ def main():
             if number_of_incoming_nodes == -1:
                 nodes = list(set(nodes))
             else:
-                nodes = list(set(random.sample(nodes, number_of_incoming_nodes)))
+                nodes = random.sample(list(set(nodes)), number_of_incoming_nodes)
             number_of_incoming_nodes = len(nodes)
             out_file.write(str(number_of_incoming_nodes))
             out_file.write("\n")
