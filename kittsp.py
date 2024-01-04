@@ -133,6 +133,7 @@ def main():
 
     lazyCB = cpx.register_callback(MyLazyConsCallback)
     lazyCB.read_graph(nodes, K, cpx.variables.get_names())
+    
     cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
     cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
     cpx.solve()

@@ -11,10 +11,6 @@ def distance(x1, y1, x2, y2):
     """
     We will be able to watch changes in the path after changing type of metrics we use
     """
-    assert type(x1) is float
-    assert type(y1) is float
-    assert type(x2) is float
-    assert type(y2) is float
     return int(math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
 def main():
