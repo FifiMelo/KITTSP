@@ -2,7 +2,6 @@ import cplex
 import display
 import utils
 import sys
-from icecream import ic
 
 
 
@@ -105,8 +104,8 @@ class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
                     val = [1] * len(variable_names))
                 self.add(
                     constraint = lin_expr,
-                    sense = "E",
-                    rhs = 2.0
+                    sense = "G",
+                    rhs = 1
                     )
                 
     def read_graph(self, nodes, K, variable_names):
@@ -132,8 +131,8 @@ def main():
     cpx.objective.set_sense(cpx.objective.sense.minimize)
     nodes, K = get_input(input_file_name, cpx)
 
-    #lazyCB = cpx.register_callback(MyLazyConsCallback)
-    #lazyCB.read_graph(nodes, K, cpx.variables.get_names())
+    lazyCB = cpx.register_callback(MyLazyConsCallback)
+    lazyCB.read_graph(nodes, K, cpx.variables.get_names())
     cpx.parameters.preprocessing.presolve.set(cpx.parameters.preprocessing.presolve.values.off)
     cpx.parameters.mip.strategy.search.set(cpx.parameters.mip.strategy.search.values.traditional)
     cpx.solve()
