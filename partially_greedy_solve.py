@@ -1,6 +1,5 @@
 import utils
 import display
-from icecream import ic
 
 if __name__ == '__main__':
     print("Please enter problem instance name: (from folder preprocessed)")
