@@ -1,7 +1,12 @@
 import utils
 import display
+import kittsp
 
-if __name__ == '__main__':
+def main():
+    """
+    this function solves kittsp partially greedy, ie uses simple tsp to find first tour, 
+    then removes edges used in the first tour, then uses tsp to find another tour and so on.
+    """
     print("Please enter problem instance name: (from folder preprocessed)")
     input_file_name = f"./preprocessed/{input()}.txt"
     print("Do you want to display graph? (Y/N) (only for instances with nodes names in format title_x_y)")
@@ -15,7 +20,7 @@ if __name__ == '__main__':
     objective = 0
 
     for k in range(K):
-        cpx = utils.solve_kittsp(nodes, edges, 1)
+        cpx = kittsp.solve_kittsp(nodes, edges, 1)
 
         new_edges = []
 
@@ -36,3 +41,5 @@ if __name__ == '__main__':
 
 
 
+if __name__ == '__main__':
+    main()

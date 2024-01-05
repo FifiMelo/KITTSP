@@ -1,7 +1,11 @@
 import utils
 import display
+import kittsp
 
 if __name__ == '__main__':
+    """
+    This function solves kittsp using classical formulation.
+    """
     print("Please enter problem instance name: (from folder preprocessed)")
     input_file_name = f"./preprocessed/{input()}.txt"
     print("Do you want to display graph? (Y/N) (only for instances with nodes names in format title_x_y)")
@@ -11,7 +15,7 @@ if __name__ == '__main__':
         display_graph = False
 
     nodes, edges, K = utils.read_input(input_file_name)
-    cpx = utils.solve_kittsp(nodes, edges, K)
+    cpx = kittsp.solve_kittsp(nodes, edges, K)
 
     objective = cpx.solution.get_objective_value()
     solution = cpx.solution.get_values()

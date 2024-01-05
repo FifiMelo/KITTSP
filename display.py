@@ -7,6 +7,9 @@ import numpy as np
 
 
 def console_write_result(tours, objective, K):
+    """
+    This function console writes the results, ie tours and objective
+    """
 
     for k in range(K):
         print(f"\nTour number {k}:")
@@ -17,6 +20,9 @@ def console_write_result(tours, objective, K):
 
 
 def display(nodes, tours, K, title):
+    """
+    this function displays graph presenting the solution
+    """
     X, Y = [], []
     for node in nodes:
         node_name, x, y = node.split("_")
