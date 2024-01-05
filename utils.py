@@ -1,6 +1,7 @@
 import cplex
 from icecream import ic
 import display
+import sys
 
 
 def tour(possible_edges, values, K):
@@ -138,25 +139,33 @@ def solve_kittsp(node_names, edge_list, K = 1):
             This function is used to add a constraint eliminating subtours using bfs algorithm
             """
 
+            try:
+                visited_nodes = tour(self.possible_edges, self.get_values(), self.K)
 
-            visited_nodes = tour(self.possible_edges, self.get_values(), self.K)
+                for k in range(self.K):
+                    if len(visited_nodes[k]) < len(self.nodes):
+                        # if the tour turned out to be just a subtour
+                        node_group1 = visited_nodes[k]
+                        node_group2 = set(self.nodes) - set(visited_nodes[k])
 
-            for k in range(self.K):
-                if len(visited_nodes[k]) < len(self.nodes):
-                    # if the tour turned out to be just a subtour
-                    node_group1 = visited_nodes[k]
-                    node_group2 = set(self.nodes) - set(visited_nodes[k])
-                    variable_names = [
-                        variable_name(node1, node2, k) for node1 in node_group1 for node2 in node_group2
-                        ]
-                    lin_expr = cplex.SparsePair(
-                        ind = variable_names,
-                        val = [1] * len(variable_names))
-                    self.add(
-                        constraint = lin_expr,
-                        sense = "G",
-                        rhs = 1
-                        )
+                        variable_names = []
+                        for node1 in node_group1: 
+                            for node2 in node_group2:
+                                v = variable_name(node1, node2, k)
+                                if v in self.possible_edges:
+                                    variable_names.append(v)
+
+                        lin_expr = cplex.SparsePair(
+                            ind = variable_names,
+                            val = [1] * len(variable_names))
+                        self.add(
+                            constraint = lin_expr,
+                            sense = "G",
+                            rhs = 1
+                            )
+            except:
+                print(sys.exc_info()[0])
+                raise
                     
         def read_graph(self, nodes, K, variable_names):
             """
@@ -168,6 +177,7 @@ def solve_kittsp(node_names, edge_list, K = 1):
             self.K = K
 
     lazyCB = cpx_object.register_callback(MyLazyConsCallback)
+    
     lazyCB.read_graph(node_names, K, cpx_object.variables.get_names())
     
     cpx_object.parameters.preprocessing.presolve.set(cpx_object.parameters.preprocessing.presolve.values.off)

@@ -6,7 +6,7 @@ Gdansk
 Lodz
 Wroclaw
 Poznan
-14
+15
 Warsaw Gdansk 340
 Krakow Gdansk 596
 Warsaw Lodz 153
@@ -21,3 +21,4 @@ Poznan Gdansk 311
 Poznan Lodz 215
 Poznan Warsaw 312
 Poznan Krakow 458
+Warsaw Krakow 294
