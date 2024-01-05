@@ -13,12 +13,14 @@ if __name__ == '__main__':
 
     nodes, edges, K = utils.read_input(input_file_name)
     solution = []
+    objective = 0
 
     for k in range(K):
         cpx = utils.solve_kittsp(nodes, edges, 1)
 
         new_edges = []
 
+        objective += cpx.solution.get_objective_value()
         names = cpx.variables.get_names()
         values = cpx.solution.get_values()
 
@@ -28,7 +30,10 @@ if __name__ == '__main__':
             if values[i] < 0.5:
                 new_edges.append(edges[i])
         edges = new_edges
-    print(solution)
+
+    display.console_write_result(solution, objective, K)
+    if display_graph:
+        display.display(nodes, solution, K, input_file_name)
 
 
 

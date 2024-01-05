@@ -12,9 +12,16 @@ if __name__ == '__main__':
 
     nodes, edges, K = utils.read_input(input_file_name)
     cpx = utils.solve_kittsp(nodes, edges, K)
+
+    objective = cpx.solution.get_objective_value()
+    solution = cpx.solution.get_values()
+    variable_names = cpx.variables.get_names()
+
+    tours = utils.tour(variable_names, solution, K)
+
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
-        display.console_write_result(cpx, K)
+        display.console_write_result(tours, objective, K)
         if display_graph:
-            display.display(cpx, nodes, K, f"instance: {input_file_name}, K: {K}")
+            display.display(nodes, tours, K, f"instance: {input_file_name}, K: {K}")
     else:
         print(cpx.solution.get_status())

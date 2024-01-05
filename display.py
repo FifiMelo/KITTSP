@@ -8,11 +8,8 @@ from icecream import ic
 
 
 
-def console_write_result(cpx_object, K):
-    objective = cpx_object.solution.get_objective_value()
-    solution = cpx_object.solution.get_values()
-    variable_names = cpx_object.variables.get_names()
-    tours = utils.tour(variable_names, solution, K)
+def console_write_result(tours, objective, K):
+
     for k in range(K):
         print(f"\nTour number {k}:")
         print(tours[k][-1])
@@ -21,12 +18,7 @@ def console_write_result(cpx_object, K):
     print(f"\n total distance is: {objective}")
 
 
-
-def display(cpx_object, nodes, K, title):
-    objective = cpx_object.solution.get_objective_value()
-    solution = cpx_object.solution.get_values()
-    variable_names = cpx_object.variables.get_names()
-    tours = utils.tour(variable_names, solution, K)
+def display(nodes, tours, K, title):
     X, Y = [], []
     for node in nodes:
         node_name, x, y = node.split("_")
@@ -48,5 +40,6 @@ def display(cpx_object, nodes, K, title):
     plt.scatter(X, Y)
     plt.title(title)
     plt.show()
+
 
 
