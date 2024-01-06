@@ -1,5 +1,6 @@
 import utils
 import cplex
+import sys
 
 
 def solve_kittsp(node_names, edge_list, K = 1):
@@ -44,8 +45,8 @@ def solve_kittsp(node_names, edge_list, K = 1):
                 names = [f"{node1}-{node2}"]
                 )
         
-        # adding simple constraints
-            # that in each tour in each node exactly two edges must be selected
+    # adding simple constraints
+    # that in each tour in each node exactly two edges must be selected
     for node in node_names:
         for tour_index in range(K):
             variables = utils.get_variables_of_node(node, tour_index, cpx_object)
@@ -59,6 +60,30 @@ def solve_kittsp(node_names, edge_list, K = 1):
                 rhs = [2],
                 names = [f"{node}-{tour_index}"]
                 )
+            
+    # adding breaking symmetry constraints
+    for k in range(K - 1):
+        ind = []
+        val = []
+        for edge in edge_list:
+            node1, node2, cost = edge
+            ind.append(utils.variable_name(node1, node2, k))
+            ind.append(utils.variable_name(node1, node2, k + 1))
+            val.append(float(cost))
+            val.append(float(cost) * -1)
+
+        lin_expr = cplex.SparsePair(ind = ind, val = val)
+
+        cpx_object.linear_constraints.add(
+                lin_expr = [lin_expr],
+                senses=["L"], 
+                rhs = [1],
+                names = [f"{k}th < {k + 1}th"]
+                )
+
+
+        
+    
                 
     class MyLazyConsCallback(cplex.callbacks.LazyConstraintCallback):
         def __call__(self):
