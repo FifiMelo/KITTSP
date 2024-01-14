@@ -37,7 +37,7 @@ def main():
 
     display.console_write_result(solution, objective, K)
     if display_graph:
-        display.display(nodes, solution, K, input_file_name)
+        display.display(nodes, solution, K, f"instance: {input_file_name}, K: {K}, partially-greedy")
 
 
 

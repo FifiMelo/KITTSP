@@ -26,6 +26,6 @@ if __name__ == '__main__':
     if cpx.solution.get_status()!=103 and cpx.solution.get_status()!=108:
         display.console_write_result(tours, objective, K)
         if display_graph:
-            display.display(nodes, tours, K, f"instance: {input_file_name}, K: {K}")
+            display.display(nodes, tours, K, f"instance: {input_file_name}, K: {K}, non-greedy")
     else:
         print(cpx.solution.get_status())
