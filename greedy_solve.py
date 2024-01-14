@@ -4,7 +4,7 @@ import random
 from icecream import ic
 
 
-def get_adjacency_list(nodes, edges, eps = 0.01):
+def get_adjacency_list(nodes, edges):
     adjacency_list = dict()
     for edge in edges:
         node1, node2, cost = edge
@@ -36,14 +36,22 @@ def find_tour(nodes, adjacency_list):
         
         actual_node = new_node
     
-    if not path[-1] in adjacency_list[path[0]]:
+    if (not path[-1] in adjacency_list[path[0]]) or len(path) != len(nodes):
         path = find_tour(nodes, adjacency_list)
     return path
-        
 
-        
+
+def calculate_objective(adjacency_list, tours):
+    objective = 0
+    for tour in tours:
+        for i in range(len(tour) - 1):
+            objective += adjacency_list[tour[i]][tour[i + 1]]
+        objective += adjacency_list[tour[0]][tour[-1]]
+    return objective
+
 
 def main():
+    random.seed(123)
     print("Please enter problem instance name: (from folder preprocessed)")
     input_file_name = f"./preprocessed/{input()}.txt"
     print("Do you want to display graph? (Y/N) (only for instances with nodes names in format title_x_y)")
@@ -54,7 +62,6 @@ def main():
     nodes, edges, K = utils.read_input(input_file_name)
     adjacency_list = get_adjacency_list(nodes, edges)
     tours = []
-    objective = 0
     for k in range(K - 1):
         path = find_tour(nodes, adjacency_list)
         tours.append(path)
@@ -71,13 +78,14 @@ def main():
     path = find_tour(nodes, adjacency_list)
     tours.append(path)
 
+    ic(tours)
+
+    adjacency_list = get_adjacency_list(nodes, edges)
+
+    objective = calculate_objective(adjacency_list, tours)
     display.console_write_result(tours, objective, K)
     if display_graph:
         display.display(nodes, tours, K, f"instance: {input_file_name}, K: {K}, greedy")
-    
-    
-        
-    
     
 
 
